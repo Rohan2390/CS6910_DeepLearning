@@ -37,8 +37,7 @@ class MOMEMTUM:
             self.lastUpdateB[i] = (gamma * self.lastUpdateB[i]) + (self.lr * self.nn.bUpdate[i])
             self.nn.bias[i] = self.nn.bias[i] - self.lastUpdateB[i]          
 
-            
-            class RMSPROP:
+class RMSPROP:
 
     def __init__(self,nn,beta=0.9,eps= 1e-8,lr=0.001):
 
