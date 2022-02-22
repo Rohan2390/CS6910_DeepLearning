@@ -42,17 +42,27 @@ class NESTEROV:
         self.lastUpdateB = [np.zeros_like(i) for i in nn.weights]
 
     def partialupdate(self):
-        wahead = self.nn.w - self.gamma * update
-        self.originalw = self.nn.w
-        self.nn.w = wahead
+        self.originalw = self.nn.weights
+        self.originalb = self.nn.bias
+
+        wahead = []
+        for i in range(self.nn.numOfLayers-1):
+            wahead.append(self.nn.weights[i] - self.gamma * self.lastUpdateW[i])
+        self.nn.weights = wahead
+
+        bahead = []
+        for i in range(self.nn.numOfLayers-1):
+            bahead.append(self.nn.bias[i] - self.gamma * self.lastUpdateB[i])
+        self.nn.bias = bahead
+
 
     def update(self):
         for i in range(self.nn.numOfLayers - 1):
             self.lastUpdateW[i] = (self.gamma * self.lastUpdateW[i]) + (self.lr * self.nn.wUpdate[i])
-            self.nn.weights[i] = self.nn.weights[i] - self.lastUpdateW[i]
+            self.nn.weights[i] = self.originalw[i] - self.lastUpdateW[i]
 
             self.lastUpdateB[i] = (self.gamma * self.lastUpdateB[i]) + (self.lr * self.nn.bUpdate[i])
-            self.nn.bias[i] = self.nn.bias[i] - self.lastUpdateB[i]
+            self.nn.bias[i] = self.originalb[i] - self.lastUpdateB[i]
 
 
 class RMSPROP:
@@ -98,16 +108,15 @@ class ADAM:
         for i in range(self.nn.numOfLayers - 1):
             self.lastUpdateVW[i] = self.beta2 * self.lastUpdateVW[i] + (1 - self.beta2) * self.nn.wUpdate[i] ** 2
             self.lastUpdateMW[i] = self.beta1 * self.lastUpdateMW[i] + (1 - self.beta1) * self.nn.wUpdate[i]
-            self.lastUpdateMhatW[i] = self.lastUpdateMW[i] / (1 - math.pow(self.beta1, self.step))
-            self.lastUpdateVhatW[i] = self.lastUpdateVW[i] / (1 - math.pow(self.beta2, self.step))
+            self.lastUpdateMhatW = self.lastUpdateMW[i] / (1 - math.pow(self.beta1, self.step))
+            self.lastUpdateVhatW = self.lastUpdateVW[i] / (1 - math.pow(self.beta2, self.step))
 
             self.lastUpdateVB[i] = self.beta2 * self.lastUpdateVB[i] + (1 - self.beta2) * self.nn.bUpdate[i] ** 2
             self.lastUpdateMB[i] = self.beta1 * self.lastUpdateMB[i] + (1 - self.beta1) * self.nn.bUpdate[i]
-            self.lastUpdateMhatB[i] = self.lastUpdateMB[i] / (1 - math.pow(self.beta1, self.step))
-            self.lastUpdateVhatB[i] = self.lastUpdateVB[i] / (1 - math.pow(self.beta2, self.step))
+            self.lastUpdateMhatB = self.lastUpdateMB[i] / (1 - math.pow(self.beta1, self.step))
+            self.lastUpdateVhatB = self.lastUpdateVB[i] / (1 - math.pow(self.beta2, self.step))
 
-            self.nn.weights[i] = self.nn.weights[i] - (self.lr * self.lastUpdateMhatW[i]) / (
-            (np.sqrt(self.lastUpdateVhatW[i]) + self.eps))
-            self.nn.bias[i] = self.nn.bias[i] - (self.lr * self.lastUpdateMhatB[i]) / (
-            (np.sqrt(self.lastUpdateVhatB[i]) + self.eps))
-
+            self.nn.weights[i] = self.nn.weights[i] - (self.lr * self.lastUpdateMhatW) / (
+            (np.sqrt(self.lastUpdateVhatW) + self.eps))
+            self.nn.bias[i] = self.nn.bias[i] - (self.lr * self.lastUpdateMhatB) / (
+            (np.sqrt(self.lastUpdateVhatB) + self.eps))
