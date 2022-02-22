@@ -1,8 +1,6 @@
 import numpy as np
 import math
 
-
-
 class SGD:
 
     def __init__(self, nn, lr=0.001):
@@ -10,10 +8,9 @@ class SGD:
         self.lr = lr
 
     def update(self):
-        for i in range(self.nn.num_of_layers - 1):
+        for i in range(self.nn.numOfLayers - 1):
             self.nn.weights[i] = self.nn.weights[i] - self.lr * self.nn.wUpdate[i]
             self.nn.bias[i] = self.nn.bias[i] - self.lr * self.nn.bUpdate[i]
-
 
 class MOMEMTUM:
 
@@ -26,7 +23,7 @@ class MOMEMTUM:
         self.lastUpdateB = [np.zeros_like(i) for i in nn.weights]
 
     def update(self):
-        for i in range(self.nn.num_of_layers - 1):
+        for i in range(self.nn.numOfLayers - 1):
             self.lastUpdateW[i] = (self.gamma * self.lastUpdateW[i]) + (self.lr * self.nn.wUpdate[i])
             self.nn.weights[i] = self.nn.weights[i] - self.lastUpdateW[i]
 
@@ -50,7 +47,7 @@ class NESTEROV:
         self.nn.w = wahead
 
     def update(self):
-        for i in range(self.nn.num_of_layers - 1):
+        for i in range(self.nn.numOfLayers - 1):
             self.lastUpdateW[i] = (self.gamma * self.lastUpdateW[i]) + (self.lr * self.nn.wUpdate[i])
             self.nn.weights[i] = self.nn.weights[i] - self.lastUpdateW[i]
 
@@ -70,7 +67,7 @@ class RMSPROP:
         self.lastUpdateB = [np.zeros_like(i) for i in nn.weights]
 
     def update(self):
-        for i in range(self.nn.num_of_layers - 1):
+        for i in range(self.nn.numOfLayers - 1):
             self.lastUpdateV[i] = self.beta * self.lastUpdateV[i] + (1 - self.beta) * self.nn.wUpdate[i] ** 2
             self.nn.weights[i] = self.nn.weights[i] - (self.lr * self.nn.wUpdate[i]) / (
                         np.sqrt(self.lastUpdateV[i]) + self.eps)
@@ -98,7 +95,7 @@ class ADAM:
     def update(self):
         self.step += 1
 
-        for i in range(self.nn.num_of_layers - 1):
+        for i in range(self.nn.numOfLayers - 1):
             self.lastUpdateVW[i] = self.beta2 * self.lastUpdateVW[i] + (1 - self.beta2) * self.nn.wUpdate[i] ** 2
             self.lastUpdateMW[i] = self.beta1 * self.lastUpdateMW[i] + (1 - self.beta1) * self.nn.wUpdate[i]
             self.lastUpdateMhatW[i] = self.lastUpdateMW[i] / (1 - math.pow(self.beta1, self.step))
@@ -113,9 +110,4 @@ class ADAM:
             (np.sqrt(self.lastUpdateVhatW[i]) + self.eps))
             self.nn.bias[i] = self.nn.bias[i] - (self.lr * self.lastUpdateMhatB[i]) / (
             (np.sqrt(self.lastUpdateVhatB[i]) + self.eps))
-
-
-
-
-
 
