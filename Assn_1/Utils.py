@@ -7,7 +7,8 @@ def SigmoidDerivative(x):
     return x * (1 - x)
 
 def Softmax(x):
-    return np.exp(x) / sum(np.exp(x))
+    exp = np.exp(x)
+    return exp / np.sum(exp,axis=1).reshape(-1,1)
 
 def Tanh(x):
     return np.tanh(x)
@@ -35,6 +36,7 @@ class CrossEntropyLoss:
         pass
 
     def CalculateLoss(self,yTrue,yPreds):
+
         self.lossVal = np.mean(-1*yTrue*np.log(yPreds))
         self.lossGradientVal = yPreds-yTrue
         self.lossGradientVal = self.lossGradientVal.reshape((-1,1,len(yTrue[0])))

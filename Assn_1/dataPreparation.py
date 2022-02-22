@@ -13,9 +13,12 @@ def PrePareMNISTData():
     xTrain = xTrain.reshape(-1,28*28) #Add this to config
     xTest = xTest.reshape(-1,28*28) #Add this to config
 
+    yTrain = np.eye(10)[yTrain]
+    yTest = np.eye(10)[yTest]
+
     (xTrain,yTrain),(xVal,yVal) = splitData(xTrain,yTrain)
 
-    return (xTrain,yTrain),(xVal,yVal),(xTest,yTest)
+    return (xTrain/255.0,yTrain),(xVal/255.0,yVal),(xTest/255,yTest)
 
 def splitData(x,y,percent=10):
 
@@ -29,7 +32,11 @@ def PlotData(x,y):
 
     classes = np.unique(y)
 
-    fig,ax = plt.subplot(1,len(classes),figsize=(20,40))
+    fig,ax = plt.subplots(1,len(classes),figsize=(20,40))
 
     for i in classes:
-        ax[i].imshow(x[y[y==classes]][0])
+        ax[i].imshow(x[y==i][0])
+
+if __name__=='__main__':
+    PrePareMNISTData()
+    plt.show()
