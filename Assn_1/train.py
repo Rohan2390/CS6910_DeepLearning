@@ -30,8 +30,9 @@ class Trainer:
 
             for batch in tqdm(range(len(xTrain)//self.bs)):
 
-                # if isinstance(self.optimizer,(Nesterov,Nadam):)
-                #     self.optimizer.partialUpdate()
+                if isinstance(self.optimizer,(NESTEROV,NADAM)):
+                    self.optimizer.partialUpdate()
+
                 batchI = indices[batch*self.bs:(batch+1)*self.bs]
                 xBatch = xTrain[batchI]
                 yBatch = yTrain[batchI]
@@ -54,11 +55,11 @@ class Trainer:
 if __name__ == '__main__':
     config = {
         'numInputs':28*28,
-        'numHiddenLayers':[32,32,32],
+        'numHiddenLayers':[128,128,128],
         'numOutputs':10,
         'actFun':[ReLU,ReLU,ReLU,Softmax],
         'loss':CrossEntropyLoss,
-        'optimizer':SGD,
+        'optimizer':ADAM,
         'optimArgs':{'lr':0.001},
         'bs':64,
         'epochs':10,
