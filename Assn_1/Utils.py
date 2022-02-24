@@ -47,6 +47,9 @@ class SquaredLoss:
         pass
 
     def CalculateLoss(self,yTrue,yPreds):
-        self.lossVal = np.mean(0.5*(yTrue-yPreds)**2)
-        self.lossGradientVal = yPreds-yTrue
-        self.lossGradientVal = self.lossGradientVal.reshape((-1,1,len(yTrue[0])))
+        self.lossVal = np.mean(0.5*(yTrue-yPreds)**2)/2
+
+        yTerm = (yPreds-yTrue)*yPreds
+        iTerm = np.concatenate([np.expand_dims(yTrue,axis=2)]*len(yTrue[0]),axis=2)-np.concatenate([np.expand_dims(yPreds,axis=1)]*len(yTrue[0]),axis=1)
+
+        self.lossGradientVal = np.matmul(np.expand_dims(yTerm,axis=1),iTerm)
