@@ -60,7 +60,7 @@ if __name__ == '__main__':
         'actFun':[ReLU,ReLU,ReLU,Softmax],
         'loss':CrossEntropyLoss,
         'optimizer':ADAM,
-        'optimArgs':{'lr':0.001},
+        'optimArgs':{'lr':0.001,'wd":0},
         'bs':64,
         'epochs':10,
     }
