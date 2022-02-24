@@ -4,22 +4,27 @@ from tqdm import tqdm
 from random import shuffle
 from Utils import *
 from optimizers import *
+import wandb
 
 class Trainer:
 
     def __init__(self,config):
 
-        self.nn = NeuralNetwork(config['numInputs'],config['numHiddenLayers'],config['numOutputs'],config['actFun'],config['xaviers'])
-        self.loss = config['loss']()
+        self.nn = NeuralNetwork(config['numInputs'],
+                                [config['numHiddenLayersNeuron']]*config['numHiddenLayers'],
+                                config['numOutputOfNeuron'],
+                                [actFunDict[config['actFun']]]*config['numHiddenLayers']+[Softmax],
+                                config['xaviers']
+                                )
+        self.loss = lossFunDict[config['loss']]()
         self.optimArgs = config['optimArgs']
         self.optimArgs.update({'nn': self.nn})
-        self.optimizer = config['optimizer'](**self.optimArgs)
+        self.optimizer = optDict[config['optimizer']](**self.optimArgs)
 
         self.bs = config['bs']
         self.epochs = config['epochs']
-        #self.printVal = config['printVal']
 
-    def run(self,xTrain,yTrain,xVal,yVal):
+    def run(self,xTrain,yTrain,xVal,yVal,wandbLog=False):
 
         indices = list(range(len(xTrain)))
 
@@ -44,22 +49,29 @@ class Trainer:
                 self.optimizer.update()
                 cLoss+=self.loss.lossVal
 
-            print('Train Loss:',cLoss/batch)
-
             _,_,valPreds = self.nn.ForwardProp(xVal)
             self.loss.CalculateLoss(yVal,valPreds)
 
-            print(f'Val Loss:{self.loss.lossVal}, Val acc:{np.mean(np.argmax(valPreds,axis=1)==np.argmax(yVal,axis=1))},{len(yVal)}')
+            if wandbLog:
+                wandb.log({"Train Loss": cLoss / batch,"Val Loss":self.loss.lossVal,
+                           "Val Acc":np.mean(np.argmax(valPreds,axis=1)==np.argmax(yVal,axis=1)),
+                           "epoch":epoch
+                           })
+            else:
+                print(f'For epoch:{epoch}')
+                print('Train Loss:',cLoss/batch)
+                print(f'Val Loss:{self.loss.lossVal}, Val acc:{np.mean(np.argmax(valPreds,axis=1)==np.argmax(yVal,axis=1))},{len(yVal)}')
 
 
 if __name__ == '__main__':
     config = {
         'numInputs':28*28,
-        'numHiddenLayers':[128,128,128],
-        'numOutputs':10,
-        'actFun':[ReLU,ReLU,ReLU,Softmax],
-        'loss':CrossEntropyLoss,
-        'optimizer':ADAM,
+        'numHiddenLayers':3,
+        'numHiddenLayersNeuron':128,
+        'numOutputOfNeuron':10,
+        'actFun':'ReLU',
+        'loss':'CrossEntropyLoss',
+        'optimizer':'ADAM',
         'optimArgs':{'lr':0.001,'wd':0},
         'xaviers':True,
         'bs':64,
@@ -68,4 +80,4 @@ if __name__ == '__main__':
 
     (xTrain,yTrain),(xVal,yVal),(xTest,yTest) = PrePareMNISTData()
     trainer = Trainer(config)
-    trainer.run(xTrain,yTrain,xVal,yVal)
+    trainer.run(xTrain,yTrain,xVal,yVal,wandbLog=False)
