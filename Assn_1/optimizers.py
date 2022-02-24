@@ -7,7 +7,7 @@ class SGD:
         self.nn = nn
         self.lr = lr
         self.wd = wd
-        self.c = c
+       
 
 
     def update(self):
@@ -21,6 +21,7 @@ class MOMEMTUM:
         self.nn = nn
         self.lr = lr
         self.gamma = gamma
+        self.wd = wd
 
         self.lastUpdateW = [np.zeros_like(i) for i in nn.weights]
         self.lastUpdateB = [np.zeros_like(i) for i in nn.bias]
@@ -40,6 +41,7 @@ class NESTEROV:
         self.nn = nn
         self.lr = lr
         self.gamma = gamma
+        self.wd = wd
 
         self.lastUpdateW = [np.zeros_like(i) for i in nn.weights]
         self.lastUpdateB = [np.zeros_like(i) for i in nn.bias]
@@ -75,6 +77,7 @@ class RMSPROP:
         self.lr = lr
         self.beta = beta
         self.eps = eps
+        self.wd = wd
 
         self.lastUpdateW = [np.zeros_like(i) for i in nn.weights]
         self.lastUpdateB = [np.zeros_like(i) for i in nn.bias]
@@ -98,6 +101,7 @@ class ADAM:
         self.beta1 = beta1
         self.beta2 = beta2
         self.eps = eps
+        self.wd = wd
         self.step = 0
         self.lastUpdateVW = [np.zeros_like(i) for i in nn.weights]
         self.lastUpdateMW = [np.zeros_like(i) for i in nn.weights]
@@ -135,6 +139,7 @@ class NADAM:
         self.eps = eps
         self.step = 0
         self.gamma = gamma
+        self.wd = wd
         self.lastUpdateVW = [np.zeros_like(i) for i in nn.weights]
         self.lastUpdateMW = [np.zeros_like(i) for i in nn.weights]
 
