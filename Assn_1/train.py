@@ -9,7 +9,7 @@ class Trainer:
 
     def __init__(self,config):
 
-        self.nn = NeuralNetwork(config['numInputs'],config['numHiddenLayers'],config['numOutputs'],config['actFun'])
+        self.nn = NeuralNetwork(config['numInputs'],config['numHiddenLayers'],config['numOutputs'],config['actFun'],config['xaviers'])
         self.loss = config['loss']()
         self.optimArgs = config['optimArgs']
         self.optimArgs.update({'nn': self.nn})
@@ -61,6 +61,7 @@ if __name__ == '__main__':
         'loss':CrossEntropyLoss,
         'optimizer':ADAM,
         'optimArgs':{'lr':0.001,'wd':0},
+        'xaviers':True,
         'bs':64,
         'epochs':10,
     }
