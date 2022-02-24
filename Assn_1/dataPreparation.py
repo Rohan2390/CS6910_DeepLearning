@@ -22,7 +22,7 @@ def PrePareMNISTData():
 
 def splitData(x,y,percent=10):
 
-    valIndex = np.random.randint(0,len(x),size=int(0.1*len(x)))
+    valIndex = np.random.randint(0,len(x),size=int(percent/100*len(x)))
     trainIndex = [i for i in range(len(x)) if i not in valIndex]
 
     return (x[trainIndex],y[trainIndex]),(x[valIndex],y[valIndex])
