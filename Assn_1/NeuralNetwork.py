@@ -6,12 +6,13 @@ np.random.seed(0)
 
 class NeuralNetwork():
 
-  def __init__(self, numInputs, numHiddenLayers, numOutputs, actFun):
+  def __init__(self, numInputs, numHiddenLayers, numOutputs, actFun , xaviers = False):
 
     self.numInputs = numInputs
     self.numHiddenLayers = numHiddenLayers
     self.numOutputs = numOutputs
     self.actFun = actFun
+    self.xaviers = xaviers
 
     # Number of neurons in layers
     layers = [numInputs] + numHiddenLayers + [numOutputs]
@@ -20,10 +21,14 @@ class NeuralNetwork():
     # Initialising random bias & weights
     self.weights = []
     self.bias = []
-    for i in range(len(layers) - 1):
-      self.weights.insert(i, (np.random.uniform(-0.2,0.2,(layers[i], layers[i+1]))))
-      self.bias.insert(i, (np.random.uniform(-0.2,0.2,(layers[i + 1],))))
+    for i in range(len(layers) - 1): 
+      if self.xaviers:
+        self.weights.insert(i, (np.random.normal(0,(1/layers[i])**0.5,(layers[i], layers[i+1]))))
+        self.bias.insert(i, (np.zeroes((layers[i + 1],))))
 
+      else:
+        self.weights.insert(i, (np.random.uniform(-0.2,0.2,(layers[i], layers[i+1]))))
+        self.bias.insert(i, (np.random.uniform(-0.2,0.2,(layers[i + 1],))))
   def ForwardProp(self, X):
     self.a = {}
     self.h = {}
