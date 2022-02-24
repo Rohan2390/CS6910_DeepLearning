@@ -187,3 +187,11 @@ class NADAM:
 
             self.nn.weights[i] = self.originalw[i] - self.lastUpdateW[i]
             self.nn.bias[i] = self.originalb[i] - self.lastUpdateB[i]
+
+optDict = {
+    'SGD':SGD,
+    'NESTEROV':NESTEROV,
+    'MOMEMTUM':MOMEMTUM,
+    'ADAM':ADAM,
+    'NADAM':NADAM
+}

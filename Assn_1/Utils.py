@@ -25,11 +25,6 @@ def ReLUDerivative(x):
     x[x<=0]=0
     return x
 
-actFunDerivative = {Sigmoid:SigmoidDerivative,
-              ReLU:ReLUDerivative,
-              Tanh:TanhDerivative
-              }
-
 class CrossEntropyLoss:
 
     def __init__(self):
@@ -53,3 +48,19 @@ class SquaredLoss:
         iTerm = np.concatenate([np.expand_dims(yTrue,axis=2)]*len(yTrue[0]),axis=2)-np.concatenate([np.expand_dims(yPreds,axis=1)]*len(yTrue[0]),axis=1)
 
         self.lossGradientVal = np.matmul(np.expand_dims(yTerm,axis=1),iTerm)
+
+actFunDerivative = {Sigmoid:SigmoidDerivative,
+              ReLU:ReLUDerivative,
+              Tanh:TanhDerivative
+              }
+
+actFunDict = {
+    'ReLU':ReLU,
+    'Sigmoid':Sigmoid,
+    'Tanh':Tanh
+}
+
+lossFunDict = {
+    'CrossEntropyLoss':CrossEntropyLoss,
+    'SquaredLoss':SquaredLoss
+}
