@@ -4,6 +4,12 @@ import math
 class SGD:
 
     def __init__(self, nn, lr=0.001 , wd=0 ):
+        """
+        In SGD every update is after a single data point. The loss may or maynot decrease.
+        :param nn:neural network object
+        :param lr: learning rate (eta)
+        :param wd: weight decay used for regularisation
+        """
         self.nn = nn
         self.lr = lr
         self.wd = wd
@@ -11,6 +17,9 @@ class SGD:
 
 
     def update(self):
+        """
+        :return: The weights and bias are updated according to the type of optimiser
+        """
         for i in range(self.nn.numOfLayers - 1):
             self.nn.weights[i] = self.nn.weights[i] - self.lr * self.nn.wUpdate[i] - self.lr * self.wd *self.nn.weights[i]
             self.nn.bias[i] = self.nn.bias[i] - self.lr * self.nn.bUpdate[i] - self.lr * self.wd *self.nn.bias[i]
@@ -18,6 +27,13 @@ class SGD:
 class MOMEMTUM:
 
     def __init__(self, nn, gamma=0.9, lr=0.001 , wd=0):
+        """
+        The history is also taken into account along with the current gradient
+        :param nn:neural network object
+        :param gamma: const for scaling the history term
+        :param lr: learning rate (eta)
+        :param wd: weight decay used for regularisation
+        """
         self.nn = nn
         self.lr = lr
         self.gamma = gamma
@@ -27,6 +43,9 @@ class MOMEMTUM:
         self.lastUpdateB = [np.zeros_like(i) for i in nn.bias]
 
     def update(self):
+        """
+        :return: The weights and bias are updated according to the type of optimiser
+        """
         for i in range(self.nn.numOfLayers - 1):
             self.lastUpdateW[i] = (self.gamma * self.lastUpdateW[i]) + (self.lr * self.nn.wUpdate[i]) + self.lr * self.wd *self.nn.weights[i]
             self.nn.weights[i] = self.nn.weights[i] - self.lastUpdateW[i]
@@ -38,6 +57,13 @@ class MOMEMTUM:
 class NESTEROV:
 
     def __init__(self, nn, gamma=0.9, lr=0.001 , wd=0):
+        """
+        Momemtum leads to many oscillations so the lookahead point is taken into consideration
+        :param nn: neural network object
+        :param gamma: const for scaling the history term
+        :param lr: learning rate (eta)
+        :param wd: weight decay used for regularisation
+        """
         self.nn = nn
         self.lr = lr
         self.gamma = gamma
@@ -47,6 +73,10 @@ class NESTEROV:
         self.lastUpdateB = [np.zeros_like(i) for i in nn.bias]
 
     def partialUpdate(self):
+        """
+        This function is used to calculate the gradients at the look ahead points.
+        :return: gradients at look ahead point
+        """
         self.originalw = self.nn.weights
         self.originalb = self.nn.bias
 
@@ -62,6 +92,9 @@ class NESTEROV:
 
 
     def update(self):
+        """
+        :return: The weights and bias are updated according to the type of optimiser
+        """
         for i in range(self.nn.numOfLayers - 1):
             self.lastUpdateW[i] = (self.gamma * self.lastUpdateW[i]) + (self.lr * self.nn.wUpdate[i]) + self.lr * self.wd *self.nn.weights[i]
             self.nn.weights[i] = self.originalw[i] - self.lastUpdateW[i]
@@ -73,6 +106,13 @@ class NESTEROV:
 class RMSPROP:
 
     def __init__(self, nn, beta=0.9, eps=1e-8, lr=0.001 , wd=0):
+        """
+        :param nn: neural network object
+        :param beta: constant
+        :param eps: epochs
+        :param lr: learning rate(eta)
+        :param wd: weight decay
+        """
         self.nn = nn
         self.lr = lr
         self.beta = beta
@@ -83,6 +123,9 @@ class RMSPROP:
         self.lastUpdateB = [np.zeros_like(i) for i in nn.bias]
 
     def update(self):
+        """
+        :return: The weights and bias are updated according to the type of optimiser
+        """
         for i in range(self.nn.numOfLayers - 1):
             self.lastUpdateW[i] = self.beta * self.lastUpdateW[i] + (1 - self.beta) * self.nn.wUpdate[i] ** 2
             self.nn.weights[i] = self.nn.weights[i] - self.lr * self.wd *self.nn.weights[i]- (self.lr * self.nn.wUpdate[i]) / (
@@ -96,6 +139,14 @@ class RMSPROP:
 class ADAM:
 
     def __init__(self, nn, beta1=0.9, beta2=0.999, eps=1e-8, lr=0.001 , wd=0):
+        """
+        :param nn: neuarl network object
+        :param beta1: constant
+        :param beta2: constant
+        :param eps: num of epochs
+        :param lr: learning rate
+        :param wd: weight decay
+        """
         self.nn = nn
         self.lr = lr
         self.beta1 = beta1
@@ -110,6 +161,9 @@ class ADAM:
         self.lastUpdateMB = [np.zeros_like(i) for i in nn.bias]
 
     def update(self):
+        """
+        :return: The weights and bias are updated according to the type of optimiser
+        """
         self.step += 1
 
         for i in range(self.nn.numOfLayers - 1):
@@ -132,6 +186,15 @@ class ADAM:
 class NADAM:
 
     def __init__(self, nn, beta1=0.9, beta2=0.999, eps=1e-8, lr=0.001, gamma=0.9,wd=0):
+        """
+        :param nn: neural network object
+        :param beta1: constant
+        :param beta2: constant
+        :param eps: number of epochs
+        :param lr: learning rate
+        :param gamma: momemtum constant
+        :param wd: weight decay
+        """
         self.nn = nn
         self.lr = lr
         self.beta1 = beta1
@@ -150,6 +213,9 @@ class NADAM:
         self.lastUpdateMB = [np.zeros_like(i) for i in nn.bias]
 
     def partialUpdate(self):
+        """
+        :return: calculates the gradient at a look ahead point
+        """
 
         self.originalw = self.nn.weights
         self.originalb = self.nn.bias
@@ -165,6 +231,9 @@ class NADAM:
         self.nn.bias = bahead
 
     def update(self):
+        """
+        :return: The weights and bias are updated according to the type of optimiser
+        """
         self.step += 1
 
         for i in range(self.nn.numOfLayers - 1):
