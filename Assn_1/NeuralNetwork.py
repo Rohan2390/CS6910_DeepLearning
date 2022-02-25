@@ -7,6 +7,15 @@ np.random.seed(0)
 class NeuralNetwork():
 
   def __init__(self, numInputs, numHiddenLayers, numOutputs, actFun , xaviers = False):
+    """
+
+    :param numInputs: consists the number of inputs
+    :param numHiddenLayers: consists the number of hidden layers
+    :param numOutputs: consists the number of outputs
+    :param actFun: activation function
+    :param xaviers: initialisation type
+
+    """
 
     self.numInputs = numInputs
     self.numHiddenLayers = numHiddenLayers
@@ -31,6 +40,11 @@ class NeuralNetwork():
         self.bias.insert(i, (np.random.uniform(-0.2,0.2,(layers[i + 1],))))
 
   def ForwardProp(self, X):
+    """
+    This function takes image as input and returns output of its forward propagation.
+    :param X: image input
+    :return: preactivation function (a) and activation function (h)
+    """
     self.a = {}
     self.h = {}
     self.h[0] = X
@@ -43,6 +57,11 @@ class NeuralNetwork():
     return self.h, self.a, self.h[i + 1]
 
   def BackProp(self,loss):
+    """
+    This function takes loss as input and calculates gradient and stores them as instance variable.
+    :param loss: takes the repective loss function(CEL OR MSE)
+    :return: gradients from output layers,hidden layers and input layers(both activation and pre activation)
+    """
 
     aGrad = loss.lossGradientVal
     self.wUpdate = {}
@@ -51,7 +70,8 @@ class NeuralNetwork():
     for i in range(self.numOfLayers-2,-1,-1):
       self.wUpdate[i] = np.mean(aGrad*np.expand_dims(self.h[i],axis=2),axis=0)
       self.bUpdate[i] = np.mean(aGrad,axis=(0,1))
-
+      
+      #only for non input layers
       if i>0:
         hGrad = np.matmul(aGrad,self.weights[i].T)
         aGrad = hGrad*actFunDerivative[self.actFun[i-1]](np.expand_dims(self.a[i],axis=1))
