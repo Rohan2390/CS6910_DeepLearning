@@ -193,5 +193,6 @@ optDict = {
     'NESTEROV':NESTEROV,
     'MOMEMTUM':MOMEMTUM,
     'ADAM':ADAM,
-    'NADAM':NADAM
+    'NADAM':NADAM,
+    'RMSPROP':RMSPROP
 }
