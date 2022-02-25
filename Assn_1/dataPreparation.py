@@ -4,6 +4,12 @@ import numpy as np
 import wandb
 
 def PrePareMNISTData(wandbLog=False):
+    """
+    used for preprocessing,reshaping and normalisation
+    splitting data to train and test
+    :param wandbLog: if given true will login in wandb
+    :return: normalised values of input and output train and test values
+    """
 
     (xTrain,yTrain),(xTest,yTest) = fashion_mnist.load_data()
 
@@ -20,6 +26,10 @@ def PrePareMNISTData(wandbLog=False):
     return (xTrain/255.0,yTrain),(xVal/255.0,yVal),(xTest/255,yTest)
 
 def splitData(x,y,percent=10):
+    """
+    :param percent: As asked in the question 10% of data is used for validation
+    :return: validation data for input and output
+    """
 
     valIndex = np.random.randint(0,len(x),size=int(percent/100*len(x)))
     trainIndex = [i for i in range(len(x)) if i not in valIndex]
@@ -28,6 +38,14 @@ def splitData(x,y,percent=10):
 
 
 def PlotData(x,y,wandbLog=False):
+    """
+    :param x: input(images from fashion mnist)
+    :param y: output(labels)
+    :param wandbLog: if true will plot in wandb
+
+    The data is prepared and displayed (only the unique values)
+    """
+
 
     classes = np.unique(y)
 
