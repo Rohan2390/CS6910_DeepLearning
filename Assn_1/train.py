@@ -8,8 +8,14 @@ from plotCM import plotCM
 import wandb
 
 class Trainer:
+    """
+    Trainer is a wrapper over neural network that maintains pipeline
+    """
 
     def __init__(self,config):
+        """
+        :param config:config is a dictionary containing all parameters and controllable hyperparameters
+        """
 
         self.nn = NeuralNetwork(config['numInputs'],
                                 [config['numHiddenLayersNeuron']]*config['numHiddenLayers'],
@@ -26,6 +32,13 @@ class Trainer:
         self.epochs = config['epochs']
 
     def run(self,xTrain,yTrain,xVal,yVal,wandbLog=False):
+        """
+        :param xTrain: training data input
+        :param yTrain: training data labels
+        :param xVal: validation data input
+        :param yVal: validation data labels
+        :return: trains and tests the data with cross validation
+        """
 
         indices = list(range(len(xTrain)))
 
