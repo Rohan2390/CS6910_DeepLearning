@@ -1,4 +1,4 @@
-#CS6910 Deep Learning Assignment 1
+# CS6910 Deep Learning Assignment 1
 
 This code implements Dense Neural Network with Back Propagation using various different optimizers
 
