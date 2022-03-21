@@ -1,30 +1,38 @@
 from model import TLModel
-from keras.optimizers.adam_v2 import Adam
-from keras.preprocessing.image_dataset import image_dataset_from_directory
+from keras.optimizer_v2.adam import Adam
+from keras.preprocessing.image import ImageDataGenerator
 
 def train(config):
 
     model = TLModel()
     optimizer = Adam()
 
-    train_ds = image_dataset_from_directory(
-    directory='inaturalist_12K/train',
-    labels='inferred',
-    label_mode='categorical',
-    batch_size=32,
-    image_size=(256, 256)
+    train_ds = ImageDataGenerator(
+    )
+    train_gen = train_ds.flow_from_directory(
+      'inaturalist_12K/train',
+      target_size=(256,256),
+      batch_size=32,
+      class_mode='categorical'
     )
 
-    validation_ds = image_dataset_from_directory(
-        directory='inaturlist_12K/test',
-        labels='inferred',
-        label_mode='categorical',
-        batch_size=32,
-        image_size=(256, 256)
+    validation_ds = ImageDataGenerator(
+    )
+    valid_gen = validation_ds.flow_from_directory(
+      'inaturalist_12K/valid',
+      target_size=(256,256),
+      batch_size=32,
+      class_mode='categorical'
     )
 
-    model.compile(optimizer=optimizer,loss='categroical_crossentropy')
-    model.fit(x=train_ds,epochs=10,validation_ds=validation_ds)
+    model.compile(optimizer=optimizer,loss='categorical_crossentropy',metrics=['accuracy'])
+    model.fit(
+      x=train_gen,
+      steps_per_epoch=9000//32,
+      epochs=10,
+      validation_data=valid_gen,
+      validation_steps=1000//32
+    )
 
 if __name__=='__main__':
     train(None)
