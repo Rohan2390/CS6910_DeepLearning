@@ -2,6 +2,7 @@ from sklearn.model_selection import train_test_split
 import os
 import zipfile
 from tqdm import tqdm
+import argparse
 
 def main(datasetPath):
 
@@ -43,4 +44,6 @@ def main(datasetPath):
             
             
 if __name__=='__main__':
-    main('nature_12K.zip')
+    parser = argparse.ArgumentParser(description='Data Preparation')
+    parser.add_argument('--path',dest='path',type=str,help='Path to the dataset')
+    main((parser.parse_args().path))
