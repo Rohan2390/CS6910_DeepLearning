@@ -1,6 +1,7 @@
 from model import TLModel
 from keras.optimizer_v2.adam import Adam
 from keras.preprocessing.image import ImageDataGenerator
+import os
 
 def train(config):
 
@@ -18,7 +19,7 @@ def train(config):
     )
 
     train_gen = train_ds.flow_from_directory(
-      'inaturalist_12K/train',
+      os.path.join('inaturalist_12K','train'),
       target_size=(256,256),
       batch_size=32,
       class_mode='categorical'
@@ -28,7 +29,7 @@ def train(config):
     )
 
     valid_gen = validation_ds.flow_from_directory(
-      'inaturalist_12K/valid',
+      os.path.join('inaturalist_12K','valid'),
       target_size=(256,256),
       batch_size=32,
       class_mode='categorical'
