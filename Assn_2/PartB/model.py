@@ -1,12 +1,15 @@
 from keras.applications.efficientnet_v2 import EfficientNetV2B0
 from keras.models import Sequential
-from keras.layers import Dense,Flatten
+from keras.layers import Dense
 
 baseModelDict = {'EffnetV2B0':EfficientNetV2B0}
 
 class TLModel:
 
-    def __init__(self,baseModel='EffnetV2B0'):
+    def __init__(self,baseModel='EffnetV2B0',epochs=10,pTrainLayers=0.1):
+
+        self.epochs = epochs
+        self.pTrainLayers = pTrainLayers
 
         self.baseModel = baseModelDict[baseModel](
             include_top=False,
@@ -22,8 +25,9 @@ class TLModel:
 
         self.model.get_config()
 
-    def stopLayers(self,percent):
-        pass
+    def startLayers(self,currentEpoch):
+        for layer in self.baseModel.layers[-1*len(self.baseModel.layers)*(currentEpoch*self.pTrainLayers)/self.epochs]:
+            layer.trainable=True
 
     def compile(self,**kwargs):
         self.model.compile(**kwargs)

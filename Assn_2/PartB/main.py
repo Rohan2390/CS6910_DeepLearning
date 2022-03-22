@@ -36,13 +36,19 @@ def train(config):
     )
 
     model.compile(optimizer=optimizer,loss='categorical_crossentropy',metrics=['accuracy'])
-    model.fit(
-      x=train_gen,
-      steps_per_epoch=9000//32,
-      epochs=10,
-      validation_data=valid_gen,
-      validation_steps=1000//32
-    )
+
+    epochs = 10
+    epochUpdate = 2
+    for epoch in range(0,epochs,epochUpdate):
+
+        model.startLayers(epoch)
+        model.fit(
+          x=train_gen,
+          steps_per_epoch=9000//32,
+          epochs=epochUpdate,
+          validation_data=valid_gen,
+          validation_steps=1000//32
+        )
 
 if __name__=='__main__':
     train(None)
