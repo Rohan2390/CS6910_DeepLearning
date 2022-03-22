@@ -8,7 +8,15 @@ def train(config):
     optimizer = Adam()
 
     train_ds = ImageDataGenerator(
+        rotation_range=15,
+        width_shift_range=0.1,
+        height_shift_range=0.1,
+        zoom_range=0.1,
+        horizontal_flip=True,
+        vertical_flip=True,
+        zca_whitening=True,
     )
+
     train_gen = train_ds.flow_from_directory(
       'inaturalist_12K/train',
       target_size=(256,256),
@@ -18,6 +26,7 @@ def train(config):
 
     validation_ds = ImageDataGenerator(
     )
+
     valid_gen = validation_ds.flow_from_directory(
       'inaturalist_12K/valid',
       target_size=(256,256),

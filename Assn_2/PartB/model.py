@@ -1,6 +1,6 @@
 from keras.applications.efficientnet_v2 import EfficientNetV2B0
 from keras.models import Sequential
-from keras.layers import Dense
+from keras.layers import Dense,Flatten
 
 baseModelDict = {'EffnetV2B0':EfficientNetV2B0}
 
@@ -11,7 +11,8 @@ class TLModel:
         self.baseModel = baseModelDict[baseModel](
             include_top=False,
             classes=10,
-            pooling='max'
+            pooling='max',
+            include_preprocessing = True
         )
         self.baseModel.trainable = False
 
