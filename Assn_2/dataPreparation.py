@@ -44,4 +44,4 @@ def main(datasetPath):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Data Preparation')
     parser.add_argument('--path', dest='path', type=str, help='Path to the dataset')
-    main((parser.parse_args().path))
+    main(parser.parse_args().path)

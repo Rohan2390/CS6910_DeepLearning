@@ -6,7 +6,7 @@ baseModelDict = {'EffnetV2B0':EfficientNetV2B0}
 
 class TLModel:
 
-    def __init__(self,baseModel='EffnetV2B0',epochs=10,pTrainLayers=0.1):
+    def __init__(self,baseModel='EffnetV2B0',epochs=10,pTrainLayers=0.1,denseNeurons=1000):
 
         self.epochs = epochs
         self.pTrainLayers = pTrainLayers
@@ -21,13 +21,13 @@ class TLModel:
 
         self.model = Sequential()
         self.model.add(self.baseModel)
+        self.model.add(Dense(denseNeurons,activation='relu'))
         self.model.add(Dense(10,activation='softmax'))
 
-        self.model.get_config()
-
     def startLayers(self,currentEpoch):
-        for layer in self.baseModel.layers[-1*len(self.baseModel.layers)*(currentEpoch*self.pTrainLayers)/self.epochs]:
-            layer.trainable=True
+        if currentEpoch!=0 and self.pTrainLayers!=0:
+            for layer in self.baseModel.layers[int(-1*len(self.baseModel.layers)*(currentEpoch*self.pTrainLayers)/self.epochs):]:
+                layer.trainable=True
 
     def compile(self,**kwargs):
         self.model.compile(**kwargs)
