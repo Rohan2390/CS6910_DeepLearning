@@ -1,0 +1,17 @@
+{
+  "lr": {"values":[0.001,0.0001,0.00001]},
+  "rotation_range": {"values":[15,0]},
+  "shifting_range": {"values":[0.1,0]},
+  "flip": {"values":[true,false]},
+  "imageSize": {"values":[128,256,384]},
+  "bs": {"values":[32,64]},
+  "epochs": {"values":[3]},
+  "denseNeurons": {"values":[1024,512]},
+  "filters": {"values": [32,64]},
+  "filterorg": {"values": ["same","doubling","halving"]},
+  "filersize": {"values":  [3]},
+  "dropout": {"values":  [0,0.1,0.2]},
+  "batchnorm": {"values": [true,false]},
+  "activationFunctions": {"values": ["relu,relu,relu,relu,relu,relu"]},
+  "maxPoolFilterSize": {"values": [2]}
+}
