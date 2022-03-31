@@ -16,11 +16,11 @@ def train(config,wandbLog=False):
 
     train_ds = ImageDataGenerator(
         rotation_range=config['rotation_range'],
-        width_shift_range=config['width_shift_range'],
-        height_shift_range=config['height_shift_range'],
-        zoom_range=config['zoom_range'],
-        horizontal_flip=config['horizontal_flip'],
-        vertical_flip=config['vertical_flip'],
+        width_shift_range=config['shifting_range'],
+        height_shift_range=config['shifting_range'],
+        zoom_range=config['shifting_range'],
+        horizontal_flip=config['flip'],
+        vertical_flip=config['flip'],
     )
 
     train_gen = train_ds.flow_from_directory(
@@ -52,6 +52,7 @@ def train(config,wandbLog=False):
 
         if epoch % epochUpdate == 0:
             model.startLayers(epoch)
+            model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['accuracy'])
 
         model.fit(
             x=train_gen,
@@ -85,20 +86,11 @@ def updateConfig(args, config):
     if args.rotation_range:
         config['rotation_range'] = args.rotation_range
 
-    if args.width_shift_range:
-        config['width_shift_range'] = args.width_shift_range
+    if args.shifting_range:
+        config['shifting_range'] = args.shifting_range
 
-    if args.height_shift_range:
-        config['height_shift_range'] = args.height_shift_range
-
-    if args.zoom_range:
-        config['zoom_range'] = args.zoom_range
-
-    if args.horizontal_flip:
-        config['horizontal_flip'] = args.horizontal_flip
-
-    if args.vertical_flip:
-        config['vertical_flip'] = args.vertical_flip
+    if args.flip:
+        config['flip'] = args.flip
 
     if args.imageSize:
         config['imageSize'] = args.imageSize
@@ -126,11 +118,8 @@ if __name__ == '__main__':
     parser.add_argument('--baseModel', dest='baseModel', type=str, help='Base Model for Transfer Learning')
     parser.add_argument('--lr', dest='lr', type=float, help='Learning rate')
     parser.add_argument('--rotation_range', dest='rotation_range', type=int, help='Rotation Augmentation')
-    parser.add_argument('--width_shift_range', dest='width_shift_range', type=float, help='Width Shift Augmentations')
-    parser.add_argument('--height_shift_range', dest='height_shift_range', type=float, help='Hieght Shift Augmnetation')
-    parser.add_argument('--zoom_range', dest='zoom_range', type=float, help='Zoom Augmentation')
-    parser.add_argument('--horizontal_flip', dest='horizontal_flip', type=bool, help='Horizontal Flip')
-    parser.add_argument('--vertical_flip', dest='vertical_flip', type=bool, help='Vertical Flip')
+    parser.add_argument('--shifting_range', dest='shifting_range', type=float, help='Hieght,Width and Zoom Shift Augmentations')
+    parser.add_argument('--flip', dest='flip', type=bool, help='Horizontal and Vetical Flip')
     parser.add_argument('--imageSize', dest='imageSize', type=int, help='Image Size')
     parser.add_argument('--bs', dest='bs', type=int, help='Batch Size')
     parser.add_argument('--epochs', dest='epochs', type=int, help='Epochs')
@@ -143,12 +132,8 @@ if __name__ == '__main__':
         'baseModel': 'EffnetV2B0',
         'lr': 1e-3,
         'rotation_range': 15,
-        'width_shift_range': 0.1,
-        'height_shift_range': 0.1,
-        'zoom_range': 0.1,
-        'horizontal_flip': True,
-        'vertical_flip': True,
-        'zca_whitening': True,
+        'shifting_range': 0.1,
+        'flip': True,
         'imageSize': 256,
         'bs': 32,
         'epochs': 10,

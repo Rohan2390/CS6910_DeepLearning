@@ -9,7 +9,6 @@ def wandbTrain(config=None):
         train(config=config,wandbLog=True)
 
 def main(wandbConfig):
-    wandb.init(project='DL Assignment 2',entity='ed21s001_cs21m030')
 
     sweep_config = {
         'method': 'grid',
@@ -20,9 +19,9 @@ def main(wandbConfig):
     }
 
     sweep_config['parameters'] = wandbConfig
-    sweep_id = wandb.sweep(sweep_config, project="DL Assignment 2")
+    sweep_id = wandb.sweep(sweep_config, project="DL_ASSN_2",entity='ed21s001_cs21m030')
     print(f"Sweep ID:{sweep_id}")
-    wandb.agent(sweep_id, wandbTrain)
+    wandb.agent(sweep_id, function=wandbTrain, project="DL_ASSN_2",entity='ed21s001_cs21m030')
 
 
 if __name__=='__main__':
