@@ -45,5 +45,5 @@ if __name__=='__main__':
 
         main(wandbConfig)
     else:
-        path = args.path
+        runSweepId(args.sweepId)
 
