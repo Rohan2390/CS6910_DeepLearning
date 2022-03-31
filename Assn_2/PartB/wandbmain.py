@@ -14,7 +14,7 @@ def runSweepId(sweep_id):
 def main(wandbConfig):
 
     sweep_config = {
-        'method': 'grid',
+        'method': 'bayes',
         'metric':{
             'name':'Val Acc',
             'goal':'maximize',
