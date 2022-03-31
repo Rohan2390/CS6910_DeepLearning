@@ -142,7 +142,7 @@ if __name__ == '__main__':
     parser.add_argument('--denseNeurons', dest='denseNeurons', type=int, help='Neurons in Dense Layer')
 
     config = {
-        'baseModel': 'EffnetV2B0',
+        'baseModel': 'ResNet50',
         'lr': 1e-3,
         'rotation_range': 15,
         'shifting_range': 0.1,
