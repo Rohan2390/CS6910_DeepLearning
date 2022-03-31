@@ -9,7 +9,7 @@
   "denseNeurons": {"values":[1024,512]},
   "filters": {"values": [32,64]},
   "filterorg": {"values": ["same","doubling","halving"]},
-  "filersize": {"values":  [3]},
+  "filtersize": {"values":  [3]},
   "dropout": {"values":  [0,0.1,0.2]},
   "batchnorm": {"values": [true,false]},
   "activationFunctions": {"values": ["relu,relu,relu,relu,relu,relu"]},

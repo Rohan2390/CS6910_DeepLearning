@@ -38,7 +38,7 @@ if __name__=='__main__':
         print("Sweep Config path of Config needed.")
     elif args.path and args.sweepId:
         print("Starting new sweep using config given.")
-    elif args.path and not args.sweepI:
+    elif args.path and not args.sweepId:
         path = args.path
         with open(path, 'r') as f:
             wandbConfig = json.load(f)
