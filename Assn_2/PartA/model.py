@@ -1,5 +1,5 @@
 from keras.models import Sequential
-from keras.layers import Dense,Conv2D,Activation,MaxPooling2D
+from keras.layers import Dense,Conv2D,Activation,MaxPooling2D,Flatten
 
 class CNNModel:
 
@@ -13,8 +13,10 @@ class CNNModel:
             self.model.add(Activation('relu'))
             self.model.add(MaxPooling2D(pool_size=(2, 2)))
 
+        self.model.add(Flatten())
         self.model.add(Dense(denseNeurons, activation='relu'))
         self.model.add(Dense(10, activation='softmax'))
+        self.model.summary()
 
     def compile(self,**kwargs):
         self.model.compile(**kwargs)
