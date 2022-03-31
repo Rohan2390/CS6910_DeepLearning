@@ -139,7 +139,6 @@ if __name__ == '__main__':
     config = {
             'lr': 1e-3,
             'rotation_range': 15,
-            'width_shift_range': 0.1,
             'shifting_range': 0.1,
             'flip': True,
             'imageSize': 256,
@@ -149,6 +148,7 @@ if __name__ == '__main__':
             'filters': 32,
             'filterorg': 'same',
             'filtersize': 3,
+            'dropout':0,
             'batchnorm':True,
             'activationFunctions':'relu,relu,relu,relu,relu,relu',
             'maxPoolFilterSize':2
