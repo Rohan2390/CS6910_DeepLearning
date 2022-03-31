@@ -8,6 +8,6 @@
   "bs": {"values":[32,64]},
   "epochs": {"values":[5]},
   "epochUpdate": {"values":[1]},
-  "pTrainLayers": {"values":[0,0.1,0.2,0.5]},
+  "pTrainLayers": {"values":[0,0.2,0.5]},
   "denseNeurons": {"values":[1000]}
 }

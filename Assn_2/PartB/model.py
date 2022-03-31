@@ -1,13 +1,11 @@
-from keras.applications.efficientnet_v2 import EfficientNetV2B0
 from keras.applications.inception_resnet_v2 import InceptionResNetV2
-from keras_applications.inception_v3 import  InceptionV3
-from keras_applications.resnet50 import ResNet50
-from keras_applications.xception import Xception
+from keras.applications.inception_v3 import  InceptionV3
+from keras.applications.resnet import ResNet50
+from keras.applications.xception import Xception
 from keras.models import Sequential
 from keras.layers import Dense
 
 baseModelDict = {
-    'EffnetV2B0':EfficientNetV2B0,
     'InceptionResNetV2':InceptionResNetV2,
     'InceptionV3':InceptionV3,
     'ResNet50':ResNet50,
@@ -24,8 +22,7 @@ class TLModel:
         self.baseModel = baseModelDict[baseModel](
             include_top=False,
             classes=10,
-            pooling='max',
-            include_preprocessing = True
+            pooling='max'
         )
         self.baseModel.trainable = False
 

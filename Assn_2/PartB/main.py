@@ -5,6 +5,17 @@ from keras.callbacks import History
 import os
 import argparse
 import wandb
+from keras.applications.inception_resnet_v2 import preprocess_input as inception_resnet_v2_preprocess_input
+from keras.applications.inception_v3 import  preprocess_input as inception_v3_preprocess_input
+from keras.applications.resnet import preprocess_input as resnet_preprocess_input
+from keras.applications.xception import preprocess_input as xception_preprocess_input
+
+baseModelPreProcDict = {
+    'InceptionResNetV2':inception_resnet_v2_preprocess_input,
+    'InceptionV3':inception_v3_preprocess_input,
+    'ResNet50':resnet_preprocess_input,
+    'Xception':xception_preprocess_input
+}
 
 def train(config,wandbLog=False):
     model = TLModel(baseModel=config['baseModel'],
@@ -21,6 +32,7 @@ def train(config,wandbLog=False):
         zoom_range=config['shifting_range'],
         horizontal_flip=config['flip'],
         vertical_flip=config['flip'],
+        preprocessing_function=baseModelPreProcDict[config['baseModel']]
     )
 
     train_gen = train_ds.flow_from_directory(
@@ -31,6 +43,7 @@ def train(config,wandbLog=False):
     )
 
     validation_ds = ImageDataGenerator(
+        preprocessing_function=baseModelPreProcDict[config['baseModel']]
     )
 
     valid_gen = validation_ds.flow_from_directory(
