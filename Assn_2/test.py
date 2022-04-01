@@ -1,11 +1,15 @@
-from keras.models import load_model
+from keras.models import load_model,Model
 from keras.preprocessing.image import ImageDataGenerator
+from matplotlib import pyplot as plt
 import argparse
 import os
+import numpy as np
+
+classes = ['Amphibia','Animalia','Arachnida','Aves','Fungi','Insecta','Mammalia','Mollusca','Plantae','Reptillia']
 
 def main(args):
 
-    model = load_model(args.modelPath)
+    model = load_model(args.path)
 
     test_ds = ImageDataGenerator(
     )
@@ -18,11 +22,59 @@ def main(args):
         class_mode='categorical'
     )
 
-    model.evaluate(test_gen)
-    yPreds = model.predict(test_gen)
-    print(len(yPreds))
+    metric = model.evaluate(test_gen,return_dict=True)
 
-    #xBatch,yBatch = test_gen.flow()
+
+    xBatch,yBatch = next(test_gen)
+    yPreds = model.predict(xBatch)
+
+    fig,axs = plt.subplots(3,10,figsize=(50,15))
+    fig.suptitle(f"Overall Accuracy:{metric['accuracy']}",fontsize=25)
+
+    for i in range(3):
+        for j in range(10):
+
+            axs[i][j].imshow(xBatch[i*10+j]/255,aspect='auto')
+            axs[i][j].set_xticklabels([])
+            axs[i][j].set_yticklabels([])
+
+            axs[i][j].set_title(f"Actual:{classes[np.argmax(yBatch[i*10+j])]}, Predicted:{classes[np.argmax(yPreds[i*10+j])]}",fontsize=15)
+
+
+    plt.savefig('TestOutput.png')
+
+    if args.visualizeFilters:
+        filters, bias = model.layers[0].get_weights()
+
+        f_min, f_max = filters.min(), filters.max()
+        filters = (filters - f_min) / (f_max - f_min)
+
+        fig, axs = plt.subplots(8, 8, figsize=(20, 20))
+        fig.suptitle("Filters of First Layer", fontsize=20)
+
+        for i in range(8):
+            for j in range(8):
+                axs[i][j].imshow(filters[:, :, :, i * 8 + j], aspect='auto')
+                axs[i][j].set_xticklabels([])
+                axs[i][j].set_yticklabels([])
+
+        plt.savefig('Filters.png')
+
+        newModel = Model(inputs=model.inputs, outputs=model.layers[1].output)
+
+        featureMap = newModel.predict(xBatch)
+
+        fig, axs = plt.subplots(8, 8, figsize=(20, 20))
+        fig.suptitle("Feature Map of First Layer", fontsize=20)
+
+        for i in range(8):
+            for j in range(8):
+                axs[i][j].imshow(featureMap[0, :, :, i * 8 + j], aspect='auto')
+                axs[i][j].set_xticklabels([])
+                axs[i][j].set_yticklabels([])
+
+        plt.savefig('FeatureMap.png')
+
 
 
 if __name__=='__main__':
