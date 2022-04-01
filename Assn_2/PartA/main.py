@@ -116,7 +116,7 @@ def updateConfig(args, config):
     return config
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Data Preparation')
+    parser = argparse.ArgumentParser(description='Part A training')
     parser.add_argument('--lr', dest='lr', type=float, help='Learning rate')
     parser.add_argument('--rotation_range', dest='rotation_range', type=int, help='Rotation Augmentation')
     parser.add_argument('--shifting_range', dest='shifting_range', type=float,
