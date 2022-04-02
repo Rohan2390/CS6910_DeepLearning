@@ -4,6 +4,7 @@ from matplotlib import pyplot as plt
 import argparse
 import os
 import numpy as np
+from PartA.guidedBackProp import main as gbpen
 
 classes = ['Amphibia','Animalia','Arachnida','Aves','Fungi','Insecta','Mammalia','Mollusca','Plantae','Reptillia']
 
@@ -74,6 +75,9 @@ def main(args):
                 axs[i][j].set_yticklabels([])
 
         plt.savefig('FeatureMap.png')
+
+        gbpen(model,xBatch)
+
 
 
 
