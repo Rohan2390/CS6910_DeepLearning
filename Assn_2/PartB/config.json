@@ -1,5 +1,5 @@
 {
-  "baseModel": {"values":["EffnetV2B0"]},
+  "baseModel": {"values":["Xception"]},
   "lr": {"values":[0.001,0.0001,0.00001]},
   "rotation_range": {"values":[15,0]},
   "shifting_range": {"values":[0.1,0]},
