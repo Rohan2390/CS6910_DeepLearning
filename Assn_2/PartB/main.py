@@ -10,6 +10,7 @@ from keras.applications.inception_v3 import  preprocess_input as inception_v3_pr
 from keras.applications.resnet import preprocess_input as resnet_preprocess_input
 from keras.applications.xception import preprocess_input as xception_preprocess_input
 
+#Basemodel preprocess dictionay
 baseModelPreProcDict = {
     'InceptionResNetV2':inception_resnet_v2_preprocess_input,
     'InceptionV3':inception_v3_preprocess_input,
@@ -18,6 +19,7 @@ baseModelPreProcDict = {
 }
 
 def train(config,wandbLog=False):
+    #Get model and optimizer
     model = TLModel(baseModel=config['baseModel'],
                     epochs=config['epochs'],
                     pTrainLayers=config['pTrainLayers'],
@@ -25,6 +27,7 @@ def train(config,wandbLog=False):
                     )
     optimizer = Adam(lr=config['lr'])
 
+    #DataLoaders
     train_ds = ImageDataGenerator(
         rotation_range=config['rotation_range'],
         width_shift_range=config['shifting_range'],
@@ -54,6 +57,7 @@ def train(config,wandbLog=False):
         class_mode='categorical'
     )
 
+    #Compile model
     model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['accuracy'])
     history = History()
 
@@ -61,6 +65,7 @@ def train(config,wandbLog=False):
     epochUpdate = config['epochUpdate']
     oldAcc = 0
 
+    #Per epoch fit for wandblog and adding new layers to train
     for epoch in range(epochs):
 
         if epoch % epochUpdate == 0:
@@ -76,11 +81,13 @@ def train(config,wandbLog=False):
             callbacks=[history]
         )
 
+        #Saving Best Model
         if history.history['val_accuracy'][-1] > oldAcc:
             print('Saving Model')
             model.model.save("BestModel")
             oldAcc = history.history['val_accuracy'][-1]
 
+        #Wandb Logging
         if wandbLog:
             wandb.log({"Train Loss": history.history['loss'][-1], "Val Loss": history.history['val_loss'][-1],
                        "Train Acc": history.history['accuracy'][-1],
@@ -88,7 +95,7 @@ def train(config,wandbLog=False):
                        "epoch": epoch
                        })
 
-
+#Update config using args from cmd
 def updateConfig(args, config):
     if args.baseModel:
         config['baseModel'] = args.baseModel
@@ -127,6 +134,7 @@ def updateConfig(args, config):
 
 
 if __name__ == '__main__':
+    #Parse args from cmd
     parser = argparse.ArgumentParser(description='Part B Training')
     parser.add_argument('--baseModel', dest='baseModel', type=str, help='Base Model for Transfer Learning')
     parser.add_argument('--lr', dest='lr', type=float, help='Learning rate')
@@ -141,6 +149,7 @@ if __name__ == '__main__':
     parser.add_argument('--pTrainLayers', dest='pTrainLayers', type=float, help='Percentage of Train layers to train')
     parser.add_argument('--denseNeurons', dest='denseNeurons', type=int, help='Neurons in Dense Layer')
 
+    #Default Config
     config = {
         'baseModel': 'ResNet50',
         'lr': 1e-3,

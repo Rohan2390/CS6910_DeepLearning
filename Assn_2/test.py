@@ -8,10 +8,13 @@ from PartA.guidedBackProp import main as gbpen
 
 classes = ['Amphibia','Animalia','Arachnida','Aves','Fungi','Insecta','Mammalia','Mollusca','Plantae','Reptillia']
 
+#Evaluate Model on Test Data
 def main(args):
 
+    #Load Model
     model = load_model(args.path)
 
+    #Dataloader
     test_ds = ImageDataGenerator(
     )
 
@@ -23,9 +26,10 @@ def main(args):
         class_mode='categorical'
     )
 
+    #Evaluate
     metric = model.evaluate(test_gen,return_dict=True)
 
-
+    #Load 1 batch for plots
     xBatch,yBatch = next(test_gen)
     yPreds = model.predict(xBatch)
 
@@ -44,7 +48,9 @@ def main(args):
 
     plt.savefig('TestOutput.png')
 
+    #Visualize filters and Guided BackProp
     if args.visualizeFilters:
+        #Filter visualization
         filters, bias = model.layers[0].get_weights()
 
         f_min, f_max = filters.min(), filters.max()
@@ -61,6 +67,7 @@ def main(args):
 
         plt.savefig('Filters.png')
 
+        #Feature Map output of first conv layer visualization
         newModel = Model(inputs=model.inputs, outputs=model.layers[1].output)
 
         featureMap = newModel.predict(xBatch)
@@ -76,12 +83,14 @@ def main(args):
 
         plt.savefig('FeatureMap.png')
 
+        #Guided Back Prop Visualization
         gbpen(model,xBatch)
 
 
 
 
 if __name__=='__main__':
+    #Parse cmd args
     parser = argparse.ArgumentParser(description="Testing")
 
     parser.add_argument('--path',dest='path',type=str,help="Path to the model used for testing",default='BestModel')

@@ -6,10 +6,13 @@ import os
 import argparse
 import wandb
 
+#Function Used for training
 def train(config,wandbLog=False):
+    #Model and optimizer
     model = CNNModel(config)
     optimizer = Adam(lr=config['lr'])
 
+    #Data Loaders
     train_ds = ImageDataGenerator(
         rotation_range=config['rotation_range'],
         width_shift_range=config['shifting_range'],
@@ -37,12 +40,14 @@ def train(config,wandbLog=False):
         class_mode='categorical'
     )
 
+    #Compile model
     model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['accuracy'])
     history = History()
 
     epochs = config['epochs']
     oldAcc = 0
 
+    #Train per epoch to log in Wandb
     for epoch in range(epochs):
 
         model.fit(
@@ -54,11 +59,13 @@ def train(config,wandbLog=False):
             callbacks=[history]
         )
 
+        #Saving Model
         if history.history['val_accuracy'][-1] > oldAcc:
             print('Saving Model')
             model.model.save("BestModel")
             oldAcc = history.history['val_accuracy'][-1]
 
+        #WandbLog
         if wandbLog:
             wandb.log({"Train Loss": history.history['loss'][-1], "Val Loss": history.history['val_loss'][-1],
                        "Train Acc": history.history['accuracy'][-1],
@@ -66,6 +73,7 @@ def train(config,wandbLog=False):
                        "epoch": epoch
                        })
 
+#Updating Config to new args from command line
 def updateConfig(args, config):
 
     if args.lr:
@@ -116,6 +124,7 @@ def updateConfig(args, config):
     return config
 
 if __name__ == '__main__':
+    #Argparser for Command Line
     parser = argparse.ArgumentParser(description='Part A training')
     parser.add_argument('--lr', dest='lr', type=float, help='Learning rate')
     parser.add_argument('--rotation_range', dest='rotation_range', type=int, help='Rotation Augmentation')
@@ -136,6 +145,7 @@ if __name__ == '__main__':
     parser.add_argument('--maxPoolFilterSize', dest='maxPoolFilterSize', type=int,
                         help='Max Pool Filter Size')
 
+    #Default Config
     config = {
             'lr': 1e-3,
             'rotation_range': 15,

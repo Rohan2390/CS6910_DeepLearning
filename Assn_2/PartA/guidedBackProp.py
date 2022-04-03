@@ -3,6 +3,7 @@ from keras.models import Model
 from matplotlib import pyplot as plt
 import numpy as np
 
+#Guided Relu Function
 @tf.custom_gradient
 def guidedRelu(x):
   def grad(dy):
@@ -11,17 +12,19 @@ def guidedRelu(x):
 
 
 def main(model,xBatch):
-
+    #Model upto last Conv Layer
     gbpen_model = Model(
         inputs=[model.inputs],
         outputs=[model.get_layer(index=20).output]
     )
 
+    #Changing all Relu activations to new GuidedReLU
     layer_dict = [layer for layer in gbpen_model.layers if hasattr(layer, 'activation')]
     for layer in layer_dict:
         if layer.activation == tf.keras.activations.relu:
             layer.activation = guidedRelu
 
+    #Plotting Image
     fig = plt.figure(figsize=(20, 4))
     fig.subplots_adjust(bottom=0.025, left=0.025, top=0.975, right=0.975)
 
@@ -31,17 +34,21 @@ def main(model,xBatch):
     axs.set_xticks([])
     axs.set_yticks([])
 
+    #Plotting Excited Neurons
     op_shape = model.layers[20].output.shape[1:]
 
     for i in range(10):
 
+        #Random Neuron
         neuron = (np.random.randint(0, op_shape[0]),
                   np.random.randint(0, op_shape[1]),
                   np.random.randint(0, op_shape[2]))
 
+        #Mask for it
         mask = np.zeros((1,*op_shape),dtype=np.float)
         mask[0,neuron[0],neuron[1],neuron[2]] = 1
 
+        #Getting grads for it
         with tf.GradientTape() as tape:
             inputs = tf.cast(xBatch[0:1],tf.float32)
             tape.watch(inputs)
@@ -49,6 +56,7 @@ def main(model,xBatch):
 
         grads = tape.gradient(outputs, inputs)[0]
 
+        #Plotting Grads
         img_gb = np.dstack((grads[:, :, 0], grads[:, :, 1], grads[:, :, 2],))
         m,s = img_gb.mean(),img_gb.std()
         img_gb -= m
