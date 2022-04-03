@@ -5,6 +5,18 @@ import argparse
 import os
 import numpy as np
 from PartA.guidedBackProp import main as gbpen
+from keras.applications.inception_resnet_v2 import preprocess_input as inception_resnet_v2_preprocess_input
+from keras.applications.inception_v3 import  preprocess_input as inception_v3_preprocess_input
+from keras.applications.resnet import preprocess_input as resnet_preprocess_input
+from keras.applications.xception import preprocess_input as xception_preprocess_input
+
+#Basemodel preprocess dictionay
+baseModelPreProcDict = {
+    'InceptionResNetV2':inception_resnet_v2_preprocess_input,
+    'InceptionV3':inception_v3_preprocess_input,
+    'ResNet50':resnet_preprocess_input,
+    'Xception':xception_preprocess_input
+}
 
 classes = ['Amphibia','Animalia','Arachnida','Aves','Fungi','Insecta','Mammalia','Mollusca','Plantae','Reptillia']
 
@@ -15,8 +27,13 @@ def main(args):
     model = load_model(args.path)
 
     #Dataloader
-    test_ds = ImageDataGenerator(
-    )
+    if args.baseModel:
+        test_ds = ImageDataGenerator(
+            preprocessing_function=baseModelPreProcDict[args.baseModel]
+        )
+    else:
+        test_ds = ImageDataGenerator(
+        )
 
     test_gen = test_ds.flow_from_directory(
         os.path.join('inaturalist_12K', 'val'),
@@ -97,6 +114,8 @@ if __name__=='__main__':
     parser.add_argument('--imageSize',dest='imageSize',type=int,help="Size of image",default="256")
     parser.add_argument('--bs',dest='bs',type=int,help="Batch Size",default=64)
     parser.add_argument('--visualizeFilters',dest='visualizeFilters',type=bool,help="Boolean to control visualizing of the filter",default=False)
+    parser.add_argument('--baseModel', dest='baseModel', type=str,
+                        help="Base Model if preprocessing is used", default='Xception')
 
     args = parser.parse_args()
     main(args)
