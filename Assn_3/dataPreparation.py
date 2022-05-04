@@ -1,5 +1,6 @@
 import pandas as pd
 import argparse
+import json
 
 def getFuncMakeArray(iDict):
 
@@ -62,6 +63,10 @@ def main(lg):
     train_tsv.to_csv('train.csv',index=False)
     valid_tsv.to_csv('valid.csv',index=False)
     test_tsv.to_csv('test.csv',index=False)
+
+    with open('dict.json','w') as f:
+        json.dump({en:dictOfEnChar,lg:dictOfLgChar},f)
+
 
 if __name__=='__main__':
 

@@ -34,6 +34,7 @@ class RNNModel:
             self.encoderLayers.append(RNNLayer[config['RNNLayer']](
                 config['RNNLayerDims'],
                 dropout=config['dropout'],
+                #recurrent_dropout=config['dropout'],
                 return_state=True,
                 return_sequences=layer != config['numEncoderLayers'] - 1
             ))
@@ -44,6 +45,7 @@ class RNNModel:
             self.decoderLayers.append(RNNLayer[config['RNNLayer']](
                 config['RNNLayerDims'],
                 dropout=config['dropout'],
+                #recurrent_dropout=config['dropout'],
                 return_state=True,
                 return_sequences=True
             ))
@@ -123,26 +125,18 @@ class RNNModel:
     def predict(self, x):
 
         predictions = []
+        print("Calculating Encoder Output")
         encoderOutput = self.encoder.predict(x,batch_size=self.config['bs'])
+        state = encoderOutput[1:] * self.config['numDecoderLayers']
+        output = [np.ones((len(x), 1))]
 
-        for j,example in enumerate(x):
+        print("Calculating Decoder Output")
+        for t in tqdm(range(self.maxLen)):
 
-            state = [s[j:j+1] for s in encoderOutput[1:]] * self.config['numDecoderLayers']
-
-            output = [np.ones((1, 1))]
-            prediction = []
-            outputC = -1
-            i = 0
-
-            while(outputC!=0 and i<self.maxLen):
-
-                output = self.decoder.predict(output + state)
-                state = output[1:]
-                output = [np.argmax(output[0], axis=2)]
-                outputC = output[0][0][0]
-                prediction.append(outputC)
-
-            predictions.append(prediction)
+            output = self.decoder.predict(output+state,batch_size=self.config['bs'])
+            state = output[1:]
+            output = [np.argmax(output[0], axis=2)]
+            predictions += output
 
         return np.concatenate(predictions, axis=1)
 

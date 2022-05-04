@@ -1,5 +1,5 @@
 from model import RNNModel
-from test import test
+import test
 from keras.optimizer_v2.adam import Adam
 import wandb
 from keras.preprocessing.sequence import pad_sequences
@@ -15,7 +15,7 @@ def convertToArray(string):
     return output
 
 
-def train(config, trainPath='train.csv', validPath='test.csv', wandbLog=False):
+def train(config, trainPath='train.csv', validPath='valid.csv', wandbLog=False):
     train = pd.read_csv(trainPath)
     valid = pd.read_csv(validPath)
 
@@ -90,7 +90,7 @@ def train(config, trainPath='train.csv', validPath='test.csv', wandbLog=False):
             })
 
     if not wandbLog:
-        test(model)
+        test.test(model)
 
 #Updating Config to new args from command line
 def updateConfig(args, config):
@@ -99,10 +99,10 @@ def updateConfig(args, config):
         config['lr']=args.lr
 
     if args.epochs:
-        config['lr']=args.epochs
+        config['epochs']=args.epochs
 
     if args.bs:
-        config['lr']=args.bs
+        config['bs']=args.bs
 
     if args.embeddingDims:
         config['embeddingDims']=args.embeddingDims
@@ -121,6 +121,8 @@ def updateConfig(args, config):
 
     if args.dropout:
         config['dropout']=args.dropout
+
+    return config
 
 
 if __name__ == '__main__':
@@ -146,4 +148,6 @@ if __name__ == '__main__':
         'numDecoderLayers': 3,
         'dropout': 0.3,
     }
+
+    config = updateConfig(parser.parse_args(), config)
     train(config)
