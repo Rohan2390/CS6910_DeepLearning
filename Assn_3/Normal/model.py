@@ -1,7 +1,8 @@
 from keras.layers import Input, Embedding, LSTM, SimpleRNN, GRU, Dense
-from keras.models import Model
+from keras.models import Model,load_model
 import numpy as np
 from tqdm import tqdm
+import os
 
 RNNLayer = {'rnn': SimpleRNN, 'LSTM': LSTM, 'GRU': GRU}
 
@@ -126,7 +127,7 @@ class RNNModel:
 
         for j,example in enumerate(x):
 
-            state = [s[j:i+1] for s in encoderOutput[1:]] * self.config['numDecoderLayers']
+            state = [s[j:j+1] for s in encoderOutput[1:]] * self.config['numDecoderLayers']
 
             output = [np.ones((1, 1))]
             prediction = []
@@ -149,7 +150,7 @@ class RNNModel:
 
         preds = self.predict(x)
         correct = 0
-        print(y[69], preds[69])
+
         for iY, iPred in zip(y, preds):
 
             if np.all(iY == iPred):
@@ -157,6 +158,18 @@ class RNNModel:
 
         print(f'Word level Accuracy is {correct / len(y):0.4f}')
         return correct / len(y), preds
+
+    def saveTestModel(self):
+
+        if not os.path.exists("model"):
+            os.mkdir("model")
+
+        self.encoder.save("model/encoder")
+        self.decoder.save("model/decoder")
+
+    def loadTestModel(self):
+        self.encoder = load_model("model/encoder")
+        self.decoder = load_model("model/decoder")
 
 
 if __name__ == '__main__':

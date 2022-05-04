@@ -1,4 +1,5 @@
 from model import RNNModel
+from test import test
 from keras.optimizer_v2.adam import Adam
 import wandb
 from keras.preprocessing.sequence import pad_sequences
@@ -78,7 +79,7 @@ def train(config, trainPath='train.csv', validPath='test.csv', wandbLog=False):
         if valAcc > oldAcc:
             print("Saving Model")
             oldAcc = valAcc
-            model.trainModel.save(f'BestModel_{epoch}')
+            model.saveTestModel()
 
         if wandbLog:
             wandb.log({
@@ -87,6 +88,9 @@ def train(config, trainPath='train.csv', validPath='test.csv', wandbLog=False):
                 "Val Acc": valAcc,
                 "epoch": epoch
             })
+
+    if not wandbLog:
+        test(model)
 
 #Updating Config to new args from command line
 def updateConfig(args, config):
