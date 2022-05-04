@@ -4,7 +4,7 @@ import numpy as np
 from tqdm import tqdm
 import os
 
-RNNLayer = {'rnn': SimpleRNN, 'LSTM': LSTM, 'GRU': GRU}
+RNNLayer = {'RNN': SimpleRNN, 'LSTM': LSTM, 'GRU': GRU}
 
 
 class RNNModel:
