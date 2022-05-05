@@ -35,7 +35,7 @@ class RNNModel:
             self.encoderLayers.append(RNNLayer[config['RNNLayer']](
                 config['RNNLayerDims'],
                 dropout=config['dropout'],
-                recurrent_dropout=config['dropout'],
+                #recurrent_dropout=config['dropout'],
                 return_state=True,
                 return_sequences=True
             ))
@@ -48,7 +48,7 @@ class RNNModel:
             self.decoderLayers.append(RNNLayer[config['RNNLayer']](
                 config['RNNLayerDims'],
                 dropout=config['dropout'],
-                recurrent_dropout=config['dropout'],
+                #recurrent_dropout=config['dropout'],
                 return_state=True,
                 return_sequences=True
             ))
@@ -176,21 +176,4 @@ class RNNModel:
     def loadTestModel(self):
         self.encoder = load_model("model/encoder")
         self.decoder = load_model("model/decoder")
-
-
-if __name__ == '__main__':
-    m = RNNModel({
-        'embeddingDims': 256,
-        'RNNLayer': 'LSTM',
-        'RNNLayerDims': 256,
-        'dropout': 0.3,
-        'numDecoderLayers': 3,
-        'numEncoderLayers': 3
-    }, 20, 35, 26)
-
-    m.predict(np.zeros((100, 20)))
-
-
-
-
 
