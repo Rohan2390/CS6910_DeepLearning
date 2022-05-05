@@ -34,7 +34,7 @@ class RNNModel:
             self.encoderLayers.append(RNNLayer[config['RNNLayer']](
                 config['RNNLayerDims'],
                 dropout=config['dropout'],
-                #recurrent_dropout=config['dropout'],
+                recurrent_dropout=config['dropout'],
                 return_state=True,
                 return_sequences=layer != config['numEncoderLayers'] - 1
             ))
@@ -45,7 +45,7 @@ class RNNModel:
             self.decoderLayers.append(RNNLayer[config['RNNLayer']](
                 config['RNNLayerDims'],
                 dropout=config['dropout'],
-                #recurrent_dropout=config['dropout'],
+                recurrent_dropout=config['dropout'],
                 return_state=True,
                 return_sequences=True
             ))
