@@ -23,10 +23,10 @@ def train(config, trainPath='train.csv', validPath='valid.csv', wandbLog=False):
     en = 'en'
 
     train[lg] = train[lg].apply(convertToArray).apply(lambda x: x[1:])
-    train[en] = train[en].apply(convertToArray)#.apply(lambda x: x[1:] if config['padding'] == 'post' else x)
+    train[en] = train[en].apply(convertToArray)  # .apply(lambda x: x[1:] if config['padding'] == 'post' else x)
 
     valid[lg] = valid[lg].apply(convertToArray).apply(lambda x: x[1:])
-    valid[en] = valid[en].apply(convertToArray)#.apply(lambda x: x[1:] if config['padding'] == 'post' else x)
+    valid[en] = valid[en].apply(convertToArray)  # .apply(lambda x: x[1:] if config['padding'] == 'post' else x)
 
     maxLen = max(
         train[lg].apply(len).max(),
@@ -74,7 +74,7 @@ def train(config, trainPath='train.csv', validPath='valid.csv', wandbLog=False):
 
         print("#########################")
         print("For Valid")
-        valAcc, _ = model.evaluate(validX, validY)
+        valAcc, preds, _ = model.evaluate(validX, validY)
 
         if valAcc > oldAcc:
             print("Saving Model")
@@ -92,35 +92,35 @@ def train(config, trainPath='train.csv', validPath='valid.csv', wandbLog=False):
     if not wandbLog:
         test.test(model)
 
-#Updating Config to new args from command line
-def updateConfig(args, config):
 
+# Updating Config to new args from command line
+def updateConfig(args, config):
     if args.lr:
-        config['lr']=args.lr
+        config['lr'] = args.lr
 
     if args.epochs:
-        config['epochs']=args.epochs
+        config['epochs'] = args.epochs
 
     if args.bs:
-        config['bs']=args.bs
+        config['bs'] = args.bs
 
     if args.embeddingDims:
-        config['embeddingDims']=args.embeddingDims
+        config['embeddingDims'] = args.embeddingDims
 
     if args.RNNLayer:
-        config['RNNLayer']=args.RNNLayer
+        config['RNNLayer'] = args.RNNLayer
 
     if args.RNNLayerDims:
-        config['RNNLayerDims']=args.RNNLayerDims
+        config['RNNLayerDims'] = args.RNNLayerDims
 
     if args.numEncoderLayers:
-        config['numEncoderLayers']=args.numEncoderLayers
+        config['numEncoderLayers'] = args.numEncoderLayers
 
     if args.numDecoderLayers:
-        config['numDecoderLayers']=args.numDecoderLayers
+        config['numDecoderLayers'] = args.numDecoderLayers
 
     if args.dropout:
-        config['dropout']=args.dropout
+        config['dropout'] = args.dropout
 
     return config
 
