@@ -1,9 +1,9 @@
 from model import RNNModel
 import test
-from keras.optimizer_v2.adam import Adam
+from tensorflow.keras.optimizers import Adam
 import wandb
-from keras.preprocessing.sequence import pad_sequences
-from keras.callbacks import History
+from tensorflow.keras.preprocessing.sequence import pad_sequences
+from tensorflow.keras.callbacks import History
 import pandas as pd
 import numpy as np
 import argparse
