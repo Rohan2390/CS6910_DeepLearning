@@ -1,5 +1,5 @@
-from keras.layers import Input, Embedding, LSTM, SimpleRNN, GRU, Dense, Concatenate
-from keras.models import Model,load_model
+from tensorflow.keras.layers import Input, Embedding, LSTM, SimpleRNN, GRU, Dense, Concatenate
+from tensorflow.keras.models import Model,load_model
 import Attention
 import numpy as np
 from tqdm import tqdm
@@ -35,12 +35,12 @@ class RNNModel:
             self.encoderLayers.append(RNNLayer[config['RNNLayer']](
                 config['RNNLayerDims'],
                 dropout=config['dropout'],
-                #recurrent_dropout=config['dropout'],
+                recurrent_dropout=config['dropout'],
                 return_state=True,
                 return_sequences=True
             ))
 
-        self.attentionLayer = Attention.AttentionLayer()
+        self.attentionLayer = Attention.BahdanauAttentionLayer(config['RNNLayerDims'])
 
         self.decoderLayers = []
 
@@ -48,7 +48,7 @@ class RNNModel:
             self.decoderLayers.append(RNNLayer[config['RNNLayer']](
                 config['RNNLayerDims'],
                 dropout=config['dropout'],
-                #recurrent_dropout=config['dropout'],
+                recurrent_dropout=config['dropout'],
                 return_state=True,
                 return_sequences=True
             ))
@@ -73,7 +73,7 @@ class RNNModel:
             decoderOutput = layer(decoderOutput[0], initial_state=encoderOutput[1:])
 
 
-        attentionOutput,_ = self.attentionLayer([encoderOutput[0],decoderOutput[0]])
+        attentionOutput,_ = self.attentionLayer(decoderOutput[0],encoderOutput[0])
         concatOutput = Concatenate(axis=-1)([decoderOutput[0],attentionOutput])
 
         finalOutput = self.finalDense(concatOutput)
@@ -118,7 +118,7 @@ class RNNModel:
             decoderCurrentOutput = layer(decoderCurrentOutput[0], initial_state=layerStateInput)
             decoderOutputs += list(decoderCurrentOutput[1:])
 
-        attentionOutput, _ = self.attentionLayer([encoderOutputDecoderInput, decoderCurrentOutput[0]])
+        attentionOutput, _ = self.attentionLayer(decoderCurrentOutput[0],encoderOutputDecoderInput)
         concatOutput = Concatenate(axis=-1)([decoderCurrentOutput[0], attentionOutput])
 
         finalOutput = self.finalDense(concatOutput)
