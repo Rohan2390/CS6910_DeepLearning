@@ -79,7 +79,7 @@ def train(config, trainPath='train.csv', validPath='valid.csv', wandbLog=False):
         if valAcc > oldAcc:
             print("Saving Model")
             oldAcc = valAcc
-            model.saveTestModel()
+        model.saveTestModel()
 
         if wandbLog:
             wandb.log({
@@ -139,13 +139,13 @@ if __name__ == '__main__':
 
     config = {
         'lr': 0.001,
-        'epochs': 10,
+        'epochs': 15,
         'bs': 64,
-        'embeddingDims': 256,
+        'embeddingDims': 384,
         'RNNLayer': 'LSTM',
-        'RNNLayerDims': 256,
-        'numEncoderLayers': 3,
-        'numDecoderLayers': 3,
+        'RNNLayerDims': 384,
+        'numEncoderLayers': 1,
+        'numDecoderLayers': 1,
         'dropout': 0.3,
     }
 

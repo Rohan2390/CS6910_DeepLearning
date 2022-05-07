@@ -204,21 +204,29 @@ class RNNModel:
 
     def getConnectivity(self, x, shiftedPreds):
 
+        gradientBatch = 1024
+
         self.createGradientModel()
 
-        x = tf.convert_to_tensor(x, dtype=tf.float32)
-        shiftedPreds = tf.convert_to_tensor(shiftedPreds)
         connectivity = []
 
         for t in tqdm(range(self.maxLen)):
-            with tf.GradientTape() as tape:
-                tape.watch(x)
-                embedOutput = self.encoderEmbedding(x)
-                tape.watch(embedOutput)
-                output = self.gradientModel([embedOutput, shiftedPreds])
-                gradient = tape.gradient(output[:, t, :], embedOutput)
-                connectivity.append(np.linalg.norm(gradient.numpy(), axis=2))
 
-        connectivity = np.concatenate(connectivity)
+            batchConnectivity = []
+
+            for i in range(0,len(x),gradientBatch):
+                batchX = tf.convert_to_tensor(x[i:i+gradientBatch], dtype=tf.float32)
+                batchShiftedPreds = tf.convert_to_tensor(shiftedPreds[i:i+gradientBatch])
+
+                with tf.GradientTape() as tape:
+                    tape.watch(batchX)
+                    embedOutput = self.encoderEmbedding(batchX)
+                    tape.watch(embedOutput)
+                    output = self.gradientModel([embedOutput, batchShiftedPreds])
+                    batchConnectivity.append(np.linalg.norm(tape.gradient(output[:, t, :], embedOutput).numpy(),axis=2))
+
+            connectivity.append(np.concatenate(batchConnectivity,axis=0))
+
+        connectivity = np.stack(connectivity)
 
         return connectivity
