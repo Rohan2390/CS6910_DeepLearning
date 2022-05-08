@@ -2,6 +2,7 @@ import pandas as pd
 import argparse
 import json
 
+#Function to create array from sting
 def getFuncMakeArray(iDict):
 
     def makeArray(word):
@@ -12,8 +13,10 @@ def getFuncMakeArray(iDict):
 
     return makeArray
 
+#Add start and end tokens
 addDelimeters = lambda x:'\n'+x+'\t'
 
+#Creatae dictionary for all characters in series
 def getDictOfChar(series):
     outputSet = set()
 
@@ -38,9 +41,9 @@ def main(lg):
     valid_tsv = pd.read_csv(valid_tsv,sep='\t',names=[lg,'en','c']).dropna()
     test_tsv = pd.read_csv(test_tsv,sep='\t',names=[lg,'en','c']).dropna()
 
-
     en = 'en'
 
+    #Add delimiters
     train_tsv[lg] = train_tsv[lg].apply(addDelimeters)
     train_tsv[en] = train_tsv[en].apply(addDelimeters)
     valid_tsv[lg] = valid_tsv[lg].apply(addDelimeters)
@@ -48,9 +51,11 @@ def main(lg):
     test_tsv[lg] = test_tsv[lg].apply(addDelimeters)
     test_tsv[en] = test_tsv[en].apply(addDelimeters)
 
+    #Create Dict
     dictOfLgChar = getDictOfChar(train_tsv[lg])
     dictOfEnChar = getDictOfChar(train_tsv[en])
 
+    #Get arrays
     train_tsv[lg] = train_tsv[lg].apply(getFuncMakeArray(dictOfLgChar))
     train_tsv[en] = train_tsv[en].apply(getFuncMakeArray(dictOfEnChar))
 
@@ -60,6 +65,7 @@ def main(lg):
     test_tsv[lg] = test_tsv[lg].apply(getFuncMakeArray(dictOfLgChar))
     test_tsv[en] = test_tsv[en].apply(getFuncMakeArray(dictOfEnChar))
 
+    #Save data
     train_tsv.to_csv('train.csv',index=False)
     valid_tsv.to_csv('valid.csv',index=False)
     test_tsv.to_csv('test.csv',index=False)

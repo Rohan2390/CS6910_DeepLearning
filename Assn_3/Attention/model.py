@@ -18,6 +18,7 @@ class RNNModel:
         self.inputVocabSize = inputVocabSize
         self.outputVocabSize = outputVocabSize
 
+        #Creating layers
         self.encoderInput = Input(shape=(self.maxLen,))
         self.decoderInput = Input(shape=(self.maxLen,))
 
@@ -60,6 +61,7 @@ class RNNModel:
         self.createTrainModel()
         self.createInferenceModels()
 
+    #Function to create Training model
     def createTrainModel(self):
 
         encoderEmbeds = self.encoderEmbedding(self.encoderInput)
@@ -83,6 +85,7 @@ class RNNModel:
         self.trainModel = Model([self.encoderInput, self.decoderInput], finalOutput)
         self.trainModel.summary()
 
+    #Function to create Inference Model
     def createInferenceModels(self):
 
         encoderInput = Input(shape=(self.maxLen,))
@@ -130,12 +133,15 @@ class RNNModel:
 
         self.decoder.summary()
 
+    #Comiple train Model
     def compile(self, **kwargs):
         self.trainModel.compile(**kwargs)
 
+    #Fit on train Moadel
     def fit(self, **kwargs):
         self.trainModel.fit(**kwargs)
 
+    #Predict using input at word level
     def predict(self, x):
 
         predictions = []
@@ -155,7 +161,7 @@ class RNNModel:
             predictions += output
 
         return np.concatenate(predictions, axis=1), np.concatenate(scores, axis=1)
-
+    #Evaluate Word level accuracy
     def evaluate(self, x, y):
 
         preds, scores = self.predict(x)
@@ -169,6 +175,7 @@ class RNNModel:
         print(f'Word level Accuracy is {correct / len(y):0.4f}')
         return correct / len(y), preds, scores
 
+    #Save model
     def saveTestModel(self):
 
         if not os.path.exists("model"):
@@ -176,11 +183,12 @@ class RNNModel:
 
         self.encoder.save("model/encoder")
         self.decoder.save("model/decoder")
-
+    #Load model
     def loadTestModel(self):
         self.encoder = load_model("model/encoder")
         self.decoder = load_model("model/decoder")
 
+    #Create model for Connectivity calculation
     def createGradientModel(self):
 
         encoderEmbeds = Input(shape=(self.maxLen, self.config['embeddingDims']))
@@ -202,6 +210,7 @@ class RNNModel:
 
         self.gradientModel = Model([encoderEmbeds, self.decoderInput], finalOutput)
 
+    #Perform back propogations to get connectivity
     def getConnectivity(self, x, shiftedPreds):
 
         gradientBatch = 1024

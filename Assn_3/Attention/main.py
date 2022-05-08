@@ -8,7 +8,7 @@ import pandas as pd
 import numpy as np
 import argparse
 
-
+#Convert string format of list to list
 def convertToArray(string):
     string = string.strip('[]')
     output = [int(i) for i in string.split(', ')]
@@ -16,6 +16,7 @@ def convertToArray(string):
 
 
 def train(config, trainPath='train.csv', validPath='valid.csv', wandbLog=False):
+    #Load Data
     train = pd.read_csv(trainPath)
     valid = pd.read_csv(validPath)
 
@@ -35,6 +36,7 @@ def train(config, trainPath='train.csv', validPath='valid.csv', wandbLog=False):
         valid[en].apply(len).max()
     )
 
+    #Padding
     trainX = pad_sequences(train[en].values, padding='pre',
                            value=1.0, maxlen=maxLen)
     trainY = pad_sequences(train[lg].values, padding='post',
@@ -52,12 +54,14 @@ def train(config, trainPath='train.csv', validPath='valid.csv', wandbLog=False):
     inputVocabSize = np.max(trainX) + 1
     outputVocabSize = np.max(trainY) + 1
 
+    #Create Model
     model = RNNModel(config, maxLen, inputVocabSize, outputVocabSize)
     optimizer = Adam(lr=config['lr'])
 
     model.compile(optimizer=optimizer, loss='sparse_categorical_crossentropy', metrics=['accuracy'])
     history = History()
 
+    #Training
     epochs = config['epochs']
     oldAcc = float('-inf')
 
@@ -76,11 +80,13 @@ def train(config, trainPath='train.csv', validPath='valid.csv', wandbLog=False):
         print("For Valid")
         valAcc, preds, _ = model.evaluate(validX, validY)
 
+        #Save Model
         if valAcc > oldAcc:
             print("Saving Model")
             oldAcc = valAcc
-        model.saveTestModel()
+            model.saveTestModel()
 
+        #Logging in Wandb
         if wandbLog:
             wandb.log({
                 "Train Loss": history.history['loss'][-1],
@@ -89,6 +95,7 @@ def train(config, trainPath='train.csv', validPath='valid.csv', wandbLog=False):
                 "epoch": epoch
             })
 
+    #Testing if not in wandb mode
     if not wandbLog:
         test.test(model)
 

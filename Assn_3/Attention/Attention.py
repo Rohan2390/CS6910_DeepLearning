@@ -6,12 +6,14 @@ class BahdanauAttentionLayer(Layer):
 
     def __init__(self, dims):
         super().__init__()
+        #Dense before attentions
         self.wQuery = Dense(dims, use_bias=False)
         self.wValue = Dense(dims, use_bias=False)
+        #Actual Attention
         self.attentionLayer = AdditiveAttention()
 
     def call(self, query,value):
-
+        #Perform layer on input
         queryOutput = self.wQuery(query)
         valueOutput = self.wValue(value)
 

@@ -16,6 +16,8 @@ class RNNModel:
         self.inputVocabSize = inputVocabSize
         self.outputVocabSize = outputVocabSize
 
+        #creating layers
+
         self.encoderInput = Input(shape=(self.maxLen,))
         self.decoderInput = Input(shape=(self.maxLen,))
 
@@ -55,6 +57,7 @@ class RNNModel:
         self.createTrainModel()
         self.createInferenceModels()
 
+    #craete train model
     def createTrainModel(self):
 
         encoderEmbeds = self.encoderEmbedding(self.encoderInput)
@@ -74,6 +77,7 @@ class RNNModel:
         self.trainModel = Model([self.encoderInput, self.decoderInput], finalOutput)
         self.trainModel.summary()
 
+    #Create model for inference
     def createInferenceModels(self):
 
         encoderInput = Input(shape=(self.maxLen,))
@@ -116,12 +120,15 @@ class RNNModel:
 
         self.decoder.summary()
 
+    #Compile train model
     def compile(self, **kwargs):
         self.trainModel.compile(**kwargs)
 
+    #Fit on train model
     def fit(self, **kwargs):
         self.trainModel.fit(**kwargs)
 
+    #Word level prediction using inference model
     def predict(self, x):
 
         predictions = []
@@ -140,6 +147,7 @@ class RNNModel:
 
         return np.concatenate(predictions, axis=1)
 
+    #Evaluate given data
     def evaluate(self, x, y):
 
         preds = self.predict(x)
@@ -153,6 +161,7 @@ class RNNModel:
         print(f'Word level Accuracy is {correct / len(y):0.4f}')
         return correct / len(y), preds
 
+    #Save model
     def saveTestModel(self):
 
         if not os.path.exists("model"):
@@ -161,6 +170,7 @@ class RNNModel:
         self.encoder.save("model/encoder")
         self.decoder.save("model/decoder")
 
+    #Test Model
     def loadTestModel(self):
         self.encoder = load_model("model/encoder")
         self.decoder = load_model("model/decoder")

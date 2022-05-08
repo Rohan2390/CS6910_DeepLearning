@@ -4,7 +4,7 @@ import pandas as pd
 import json
 import os
 
-
+#Decode output vector as word
 def decodeWords(encoding,mapping,lg):
 
     l = [0,1]
@@ -23,7 +23,7 @@ def decodeWords(encoding,mapping,lg):
 
     return output
 
-
+#testing
 def test(model,testPath='test.csv'):
 
     test = pd.read_csv(testPath)
@@ -55,6 +55,7 @@ def test(model,testPath='test.csv'):
     preds[lg] = decodeWords(test[lg],outputDict,lg)
     preds[lg+'_preds'] = decodeWords(predictions,outputDict,lg)
 
+    #Save output
     if not os.path.exists('predictions_vanilla'):
       os.mkdir('predictions_vanilla')
 

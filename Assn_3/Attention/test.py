@@ -5,7 +5,7 @@ import numpy as np
 import json
 import os
 
-
+#Decode output vectors to wors
 def decodeWords(encoding, mapping, lg):
     l = [0, 1]
 
@@ -23,7 +23,7 @@ def decodeWords(encoding, mapping, lg):
 
     return output
 
-
+#Test on model
 def test(model, testPath='test.csv'):
     test = pd.read_csv(testPath)
 
@@ -58,6 +58,7 @@ def test(model, testPath='test.csv'):
     ], axis=0)
     connectivity = model.getConnectivity(testX, shiftedPreds)
 
+    #Save output
     if not os.path.exists('predictions_attention'):
         os.mkdir('predictions_attention')
 
